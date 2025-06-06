@@ -1,9 +1,5 @@
-using System;
-using System.Net.Http;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using WeatherApp.Data;
 using WeatherApp.Models;
 

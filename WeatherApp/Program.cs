@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WeatherApp.Data;
 using WeatherApp.Services;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,19 @@ builder.Services.AddDbContext<WeatherDbContext>(options =>
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddHostedService<WeatherRefreshService>();
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("WeatherRefreshJob");
+    q.AddJob<WeatherRefreshJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("WeatherRefreshJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithInterval(TimeSpan.FromMinutes(30))
+            .RepeatForever())
+    );
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
