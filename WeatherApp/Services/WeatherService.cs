@@ -23,7 +23,7 @@ namespace WeatherApp.Services
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
-            _apiKey = config["WeatherApi:ApiKey"];
+            _apiKey = Environment.GetEnvironmentVariable("OPENWEATHERMAP_API_KEY") ?? config["WeatherApi:ApiKey"];
             _apiBaseUrl = config["WeatherApi:BaseUrl"];
             if (string.IsNullOrEmpty(_apiKey) || string.IsNullOrEmpty(_apiBaseUrl))
                 throw new InvalidOperationException("API key or base URL is not configured.");
