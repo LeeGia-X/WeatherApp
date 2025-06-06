@@ -33,17 +33,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<WeatherApp.Data.WeatherDbContext>();
+    db.Database.Migrate();
+}
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
-
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
-    db.Database.Migrate();
-}
 
 app.Run();
